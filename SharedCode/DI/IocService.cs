@@ -37,6 +37,9 @@ namespace SharedCode.DI
             services.AddSingleton<IUserRepository, UserRepository>();
 
             services.AddTransient<UserViewModel>();
+            services.AddTransient<TodoViewModel>();
+            services.AddTransient<CommentViewModel>();
+            services.AddTransient<UserViewModelCross>();
 
             return services.BuildServiceProvider();
         }

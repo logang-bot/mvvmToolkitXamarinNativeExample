@@ -1,114 +1,165 @@
 ﻿using Foundation;
+using MvvmCross.Platforms.Ios.Views;
 using SharedCode.DI;
 using SharedCode.Model;
 using SharedCode.ViewModel;
 using System;
 using System.ComponentModel;
+using System.Xml;
 using UIKit;
 
 namespace MvvmTookitDemoAppiOS
 {
-    public partial class ViewController : UIViewController
+    [MvxFromStoryboard("Main")]
+    public partial class ViewController : MvxViewController<UserViewModelCross>
     {
-        private UserViewModel viewModel = IocService.GetService<UserViewModel>();
         public ViewController (IntPtr handle) : base (handle)
         {
         }
 
         public override void ViewDidLoad ()
         {
-            base.ViewDidLoad ();
-            viewModel.PropertyChanged += updateLoading;
-            dataStackView.Hidden = true;
+            base.ViewDidLoad();
+            //dataStackView.Hidden = true;
+            InitializeBinding();
+            goToTodosButton.TouchUpInside += (object sender, EventArgs e) =>
+            {
+                var vc = this.Storyboard.InstantiateViewController("TodosViewController") as TodosViewController;
+                ShowViewController(vc, this);
+            };
+
             fetchDataButton.TouchUpInside += (object sender, EventArgs e) =>
             {
-                viewModel.LoadUsersCommand.Execute(null);
+                Console.WriteLine("Not implemented");
             };
             updateButton.TouchUpInside += (object sender, EventArgs e) =>
             {
-                viewModel.SingleUser.Name = "test";
-                viewModel.SingleUser.Id += 111;
-                viewModel.SingleUser.Username = "testusername";
+
             };
-
-            viewModel.SinglePost.AddObserver((singPost) =>
-            {
-                if (singPost == null) return;
-                dataStackView.Hidden = false;
-                usersCountLabel.Text = "1";
-                nameLabel.Text = singPost.userId.ToString();
-                usernameLabel.Text = singPost.id.ToString();
-                emailLabel.Text = singPost.title.ToString();
-                idLabel.Text = singPost.body.ToString();
-            });
-            //viewModel.LoadPostsCommand.Execute(null);
-            //viewModel.LoadSingleUserCommand.Execute(null);
-            viewModel.LoadSinglePostCommand.Execute(null);
+            ViewModel.LoadSinglePostCommand.Execute(null);
 
         }
 
-        public void updateLoading(object sender, PropertyChangedEventArgs e)
+        public void InitializeBinding()
         {
-            Console.WriteLine(e.PropertyName);
-            switch (e.PropertyName)
-            {
-                case "Posts":
-                    if (viewModel.Posts != null)
-                    {
-                        dataStackView.Hidden = false;
-                        usersCountLabel.Text = viewModel.Posts.Count.ToString();
-                    }
-                    else
-                    {
-                        dataStackView.Hidden = true;
-                    }
-                    break;
-                case "IsLoading":
-                    if (viewModel.IsLoading)
-                    {
-                        progressActivityIndicator.StartAnimating();
-                        progressActivityIndicator.Hidden = false;
-                    }
-                    else
-                    {
-                        progressActivityIndicator.StopAnimating();
-                        progressActivityIndicator.Hidden = true;
-                    }
-                    break;
-                case "SingleUser":
-                    if (viewModel.SingleUser != null)
-                    {
-                        dataStackView.Hidden = false;
-                        usersCountLabel.Text = "1";
-                        nameLabel.Text = viewModel.SingleUser.Name;
-                        usernameLabel.Text = viewModel.SingleUser.Username;
-                        emailLabel.Text = viewModel.SingleUser.email;
-                        idLabel.Text = viewModel.SingleUser.Id.ToString();
-                        viewModel.SingleUser.PropertyChanged += updateUser;
-                    }
-                    else
-                    {
-                        dataStackView.Hidden = true;
-                    }
-                    break;
-            }
-        }
-
-        public void updateUser(object sender, PropertyChangedEventArgs e)
-        {
-            Console.WriteLine("Updating user");
-            switch (e.PropertyName)
-            {
-                case "Name":
-                    nameLabel.Text = viewModel.SingleUser.Name;
-                    break;
-                case "Username":
-                    usernameLabel.Text = viewModel.SingleUser.Username;
-                    break;
-                case "Id":
-                    idLabel.Text = viewModel.SingleUser.Id.ToString();
-                    break;
-            }
+            var set = CreateBindingSet();
+            set.Bind(nameLabel).To(vm => vm.SinglePost.userId);
+            set.Bind(usernameLabel).To(vm => vm.SinglePost.id);
+            set.Bind(emailLabel).To(vm => vm.SinglePost.title);
+            set.Bind(idLabel).To(vm => vm.SinglePost.body);
+            set.Apply();
         }
     }
 }
+
+// WITH MVVMTOOLKIT
+//public partial class ViewController : UIViewController
+//{
+//    //private CommentViewModel commentViewModel = IocService.GetService<CommentViewModel>();
+//    private UserViewModel viewModel = IocService.GetService<UserViewModel>();
+//    public ViewController(IntPtr handle) : base(handle)
+//    {
+//    }
+
+//    public override void ViewDidLoad()
+//    {
+//        base.ViewDidLoad();
+//        viewModel.PropertyChanged += updateLoading;
+//        dataStackView.Hidden = true;
+//        goToTodosButton.TouchUpInside += (object sender, EventArgs e) =>
+//        {
+//            var vc = this.Storyboard.InstantiateViewController("TodosViewController") as TodosViewController;
+//            ShowViewController(vc, this);
+//        };
+
+//        fetchDataButton.TouchUpInside += (object sender, EventArgs e) =>
+//        {
+//            viewModel.LoadUsersCommand.Execute(null);
+//        };
+//        updateButton.TouchUpInside += (object sender, EventArgs e) =>
+//        {
+//            viewModel.SingleUser.Name = "test";
+//            viewModel.SingleUser.Id += 111;
+//            viewModel.SingleUser.Username = "testusername";
+//        };
+
+//        viewModel.SinglePost.AddObserver((singPost) =>
+//        {
+//            if (singPost == null) return;
+//            dataStackView.Hidden = false;
+//            usersCountLabel.Text = "1";
+//            nameLabel.Text = singPost.userId.ToString();
+//            usernameLabel.Text = singPost.id.ToString();
+//            emailLabel.Text = singPost.title.ToString();
+//            idLabel.Text = singPost.body.ToString();
+//        });
+//        //viewModel.LoadPostsCommand.Execute(null);
+//        viewModel.LoadSingleUserCommand.Execute(null);
+//        //viewModel.LoadSinglePostCommand.Execute(null);
+
+//    }
+
+//    public void updateLoading(object sender, PropertyChangedEventArgs e)
+//    {
+//        Console.WriteLine(e.PropertyName);
+//        switch (e.PropertyName)
+//        {
+//            case "Posts":
+//                if (viewModel.Posts != null)
+//                {
+//                    dataStackView.Hidden = false;
+//                    usersCountLabel.Text = viewModel.Posts.Count.ToString();
+//                }
+//                else
+//                {
+//                    dataStackView.Hidden = true;
+//                }
+//                break;
+//            case "IsLoading":
+//                if (viewModel.IsLoading)
+//                {
+//                    progressActivityIndicator.StartAnimating();
+//                    progressActivityIndicator.Hidden = false;
+//                }
+//                else
+//                {
+//                    progressActivityIndicator.StopAnimating();
+//                    progressActivityIndicator.Hidden = true;
+//                }
+//                break;
+//            case "SingleUser":
+//                if (viewModel.SingleUser != null)
+//                {
+//                    dataStackView.Hidden = false;
+//                    usersCountLabel.Text = "1";
+//                    nameLabel.Text = viewModel.SingleUser.Name;
+//                    usernameLabel.Text = viewModel.SingleUser.Username;
+//                    emailLabel.Text = viewModel.SingleUser.email;
+//                    idLabel.Text = viewModel.SingleUser.Id.ToString();
+//                    viewModel.SingleUser.PropertyChanged += updateUser;
+//                }
+//                else
+//                {
+//                    dataStackView.Hidden = true;
+//                }
+//                break;
+//        }
+//    }
+
+//    public void updateUser(object sender, PropertyChangedEventArgs e)
+//    {
+//        Console.WriteLine("Updating user");
+//        switch (e.PropertyName)
+//        {
+//            case "Name":
+//                nameLabel.Text = viewModel.SingleUser.Name;
+//                break;
+//            case "Username":
+//                usernameLabel.Text = viewModel.SingleUser.Username;
+//                break;
+//            case "Id":
+//                idLabel.Text = viewModel.SingleUser.Id.ToString();
+//                break;
+//        }
+//    }
+//}

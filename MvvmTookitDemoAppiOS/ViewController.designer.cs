@@ -22,6 +22,9 @@ namespace MvvmTookitDemoAppiOS
 		UIKit.UIButton fetchDataButton { get; set; }
 
 		[Outlet]
+		UIKit.UIButton goToTodosButton { get; set; }
+
+		[Outlet]
 		UIKit.UILabel idLabel { get; set; }
 
 		[Outlet]
@@ -41,34 +44,9 @@ namespace MvvmTookitDemoAppiOS
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (fetchDataButton != null) {
-				fetchDataButton.Dispose ();
-				fetchDataButton = null;
-			}
-
-			if (progressActivityIndicator != null) {
-				progressActivityIndicator.Dispose ();
-				progressActivityIndicator = null;
-			}
-
-			if (usersCountLabel != null) {
-				usersCountLabel.Dispose ();
-				usersCountLabel = null;
-			}
-
 			if (dataStackView != null) {
 				dataStackView.Dispose ();
 				dataStackView = null;
-			}
-
-			if (nameLabel != null) {
-				nameLabel.Dispose ();
-				nameLabel = null;
-			}
-
-			if (usernameLabel != null) {
-				usernameLabel.Dispose ();
-				usernameLabel = null;
 			}
 
 			if (emailLabel != null) {
@@ -76,14 +54,44 @@ namespace MvvmTookitDemoAppiOS
 				emailLabel = null;
 			}
 
+			if (fetchDataButton != null) {
+				fetchDataButton.Dispose ();
+				fetchDataButton = null;
+			}
+
 			if (idLabel != null) {
 				idLabel.Dispose ();
 				idLabel = null;
 			}
 
+			if (nameLabel != null) {
+				nameLabel.Dispose ();
+				nameLabel = null;
+			}
+
+			if (progressActivityIndicator != null) {
+				progressActivityIndicator.Dispose ();
+				progressActivityIndicator = null;
+			}
+
 			if (updateButton != null) {
 				updateButton.Dispose ();
 				updateButton = null;
+			}
+
+			if (usernameLabel != null) {
+				usernameLabel.Dispose ();
+				usernameLabel = null;
+			}
+
+			if (usersCountLabel != null) {
+				usersCountLabel.Dispose ();
+				usersCountLabel = null;
+			}
+
+			if (goToTodosButton != null) {
+				goToTodosButton.Dispose ();
+				goToTodosButton = null;
 			}
 		}
 	}

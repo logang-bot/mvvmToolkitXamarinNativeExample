@@ -12,6 +12,8 @@ namespace SharedCode.Repository
 		Task<List<Post>> GetPostsFromNetwork();
 		Task<User> GetSingleUser();
 		Task<Post> GetSinglePost();
+		Task<Todo> GetSingleTodo();
+		Task<Comment> GetSingleComment(string id);
 	}
 	public class UserRepository : IUserRepository
 	{
@@ -76,6 +78,34 @@ namespace SharedCode.Repository
 				throw e;
 			}
 		}
+
+		public async Task<Todo> GetSingleTodo()
+		{
+            try
+            {
+                var todo = await networkService.GetData<Todo>("https://jsonplaceholder.typicode.com/todos/3");
+                return todo;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
+            }
+        }
+
+		public async Task<Comment> GetSingleComment(string id)
+		{
+			try
+			{
+				var comment = await networkService.GetData<Comment>($"https://jsonplaceholder.typicode.com/comments/{id}");
+				return comment;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
+            }
+        }
     }
 }
 

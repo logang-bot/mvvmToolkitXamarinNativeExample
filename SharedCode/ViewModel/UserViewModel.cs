@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using SharedCode.Model;
 using SharedCode.Repository;
 using SharedCode.Util;
@@ -60,7 +62,8 @@ namespace SharedCode.ViewModel
 			LoadPostsCommand = new RelayCommand(LoadPosts);
 			LoadSingleUserCommand = new RelayCommand(LoadSingleUser);
 			LoadSinglePostCommand = new RelayCommand(LoadSinglePost);
-		}
+            
+        }
 
 		private async void LoadUsers()
 		{

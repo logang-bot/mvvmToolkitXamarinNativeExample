@@ -17,6 +17,8 @@ namespace MvvmToolkitDemoAppAndroid
         private ProgressBar pbLoading;
 
         private UserViewModel viewModel = IocService.GetService<UserViewModel>();
+
+        [Obsolete]
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -24,12 +26,17 @@ namespace MvvmToolkitDemoAppAndroid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
-            tvUsersCant = FindViewById<TextView>(Resource.Id.tvUsersCant);
-            pbLoading = FindViewById<ProgressBar>(Resource.Id.pbLoading);
+            //tvUsersCant = FindViewById<TextView>(Resource.Id.tvUsersCant);
+            //pbLoading = FindViewById<ProgressBar>(Resource.Id.pbLoading);
 
-            viewModel.PropertyChanged += updateLoading;
+            //viewModel.PropertyChanged += updateLoading;
 
-            viewModel.LoadPostsCommand.Execute(null);
+            //viewModel.LoadPostsCommand.Execute(null);
+
+            FragmentTransaction transaction = FragmentManager.BeginTransaction();
+            TodosFragment todosFragment = new TodosFragment();
+            transaction.Add(Resource.Id.fragmentContainer, todosFragment);
+            transaction.Commit();
                 
             //viewModel.Users.ContinueWith(async result => Log.Debug("testing", (await result).Count.ToString()));
 
